@@ -21,4 +21,9 @@
 export { createAuthCore } from "./factory.js";
 export type { AuthCoreConfig } from "./config.js";
 export type { UserRow, SessionRow, UserStatus, UserRole } from "./types.js";
+export { hashPassword, verifyPassword, createSession, findSession, slideSession, revokeSession, revokeAllSessionsForUser, isLockedOut, recordFailure, resetFailures, isValidEmail, normalizeEmail, } from "./auth.js";
+export { createGate } from "./gate.js";
+export { requireAdmin } from "./require-admin.js";
+export { createAuthRoutes } from "./routes/auth.js";
+export { createAdminUserRoutes } from "./routes/admin.js";
 //# sourceMappingURL=index.d.ts.map

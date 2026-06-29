@@ -22,3 +22,27 @@
 export { createAuthCore } from "./factory.js";
 export type { AuthCoreConfig } from "./config.js";
 export type { UserRow, SessionRow, UserStatus, UserRole } from "./types.js";
+
+// 独立函数
+export {
+  hashPassword,
+  verifyPassword,
+  createSession,
+  findSession,
+  slideSession,
+  revokeSession,
+  revokeAllSessionsForUser,
+  isLockedOut,
+  recordFailure,
+  resetFailures,
+  isValidEmail,
+  normalizeEmail,
+} from "./auth.js";
+
+// 中间件
+export { createGate } from "./gate.js";
+export { requireAdmin } from "./require-admin.js";
+
+// 路由
+export { createAuthRoutes } from "./routes/auth.js";
+export { createAdminUserRoutes } from "./routes/admin.js";
