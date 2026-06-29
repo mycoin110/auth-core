@@ -4,6 +4,7 @@ import { createGate } from "./gate.js";
 import { requireAdmin } from "./require-admin.js";
 import { createAuthRoutes } from "./routes/auth.js";
 import { createAdminUserRoutes } from "./routes/admin.js";
+import { createPageRoutes } from "./routes/pages.js";
 export interface AuthCore {
     config: Required<AuthCoreConfig>;
     db: Database.Database;
@@ -11,6 +12,7 @@ export interface AuthCore {
     requireAdmin: typeof requireAdmin;
     authRoutes: ReturnType<typeof createAuthRoutes>;
     adminUserRoutes: ReturnType<typeof createAdminUserRoutes>;
+    pageRoutes: ReturnType<typeof createPageRoutes>;
 }
 /**
  * 创建认证核心实例。

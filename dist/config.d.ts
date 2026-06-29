@@ -15,6 +15,10 @@ export interface AuthCoreConfig {
     loginPath?: string;
     /** 注册页面路径（默认 "/register"） */
     registerPath?: string;
+    /** 管理后台路径（默认 "/admin"） */
+    adminPath?: string;
+    /** 应用图标（emoji，可选） */
+    appIcon?: string;
     /** API 认证前缀（默认 "/api/auth"） */
     authPrefix?: string;
     /** 应用名称（日志用，默认 "App"） */

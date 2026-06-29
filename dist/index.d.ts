@@ -1,22 +1,8 @@
 /**
  * @mycoin110/auth-core - 通用认证模块
  *
- * 使用方式：
- * ```typescript
- * import { createAuthCore } from "@mycoin110/auth-core";
- *
- * const auth = createAuthCore({
- *   sessionCookieName: "myapp_session",
- *   sessionTtlMs: 30 * 24 * 60 * 60 * 1000,
- *   adminEmail: "admin@example.com",
- *   dataDir: "./data",
- *   dbFileName: "app.sqlite",
- * });
- *
- * app.use("*", auth.gate);
- * app.route("/api/auth", auth.authRoutes);
- * app.route("/api/admin", auth.adminUserRoutes);
- * ```
+ * 包含：认证 API、登录/注册页面、管理页面、中间件
+ * 每个项目一行代码即可接入完整认证系统。
  */
 export { createAuthCore } from "./factory.js";
 export type { AuthCoreConfig } from "./config.js";
@@ -26,4 +12,5 @@ export { createGate } from "./gate.js";
 export { requireAdmin } from "./require-admin.js";
 export { createAuthRoutes } from "./routes/auth.js";
 export { createAdminUserRoutes } from "./routes/admin.js";
+export { createPageRoutes } from "./routes/pages.js";
 //# sourceMappingURL=index.d.ts.map

@@ -9,12 +9,14 @@ import { createGate } from "./gate.js";
 import { requireAdmin } from "./require-admin.js";
 import { createAuthRoutes } from "./routes/auth.js";
 import { createAdminUserRoutes } from "./routes/admin.js";
+import { createPageRoutes } from "./routes/pages.js";
 
 const DEFAULT_CONFIG: Partial<AuthCoreConfig> = {
   sessionCookieName: "session",
   sessionTtlMs: 30 * 24 * 60 * 60 * 1000,
   loginPath: "/login",
   registerPath: "/register",
+  adminPath: "/admin",
   authPrefix: "/api/auth",
   dbFileName: "app.sqlite",
   appName: "App",
@@ -31,6 +33,7 @@ export interface AuthCore {
   requireAdmin: typeof requireAdmin;
   authRoutes: ReturnType<typeof createAuthRoutes>;
   adminUserRoutes: ReturnType<typeof createAdminUserRoutes>;
+  pageRoutes: ReturnType<typeof createPageRoutes>;
 }
 
 /**
@@ -50,6 +53,7 @@ export function createAuthCore(userConfig: AuthCoreConfig, existingDb?: Database
   // 创建路由
   const authRoutes = createAuthRoutes(config, db);
   const adminUserRoutes = createAdminUserRoutes(config, db);
+  const pageRoutes = createPageRoutes(config);
 
   // 创建 admin 初始账号
   seedAdminIfNeeded(config, db);
@@ -65,6 +69,7 @@ export function createAuthCore(userConfig: AuthCoreConfig, existingDb?: Database
     requireAdmin,
     authRoutes,
     adminUserRoutes,
+    pageRoutes,
   };
 }
 
