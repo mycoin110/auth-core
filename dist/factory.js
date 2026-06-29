@@ -23,10 +23,12 @@ function resolveConfig(userConfig) {
  * 创建认证核心实例。
  * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件，
  * 直接挂载到自己的 Hono 应用上即可。
+ * @param userConfig 配置
+ * @param existingDb 外部数据库实例（若不传则自动创建）
  */
-export function createAuthCore(userConfig) {
+export function createAuthCore(userConfig, existingDb) {
     const config = resolveConfig(userConfig);
-    const db = createDb(config);
+    const db = existingDb ?? createDb(config);
     // 创建 gate 中间件
     const gate = createGate(config, db);
     // 创建路由

@@ -16,6 +16,8 @@ export interface AuthCore {
  * 创建认证核心实例。
  * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件，
  * 直接挂载到自己的 Hono 应用上即可。
+ * @param userConfig 配置
+ * @param existingDb 外部数据库实例（若不传则自动创建）
  */
-export declare function createAuthCore(userConfig: AuthCoreConfig): AuthCore;
+export declare function createAuthCore(userConfig: AuthCoreConfig, existingDb?: Database.Database): AuthCore;
 //# sourceMappingURL=factory.d.ts.map
