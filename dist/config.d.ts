@@ -1,3 +1,15 @@
+export interface ModuleDef {
+    /** 模块唯一标识，如 "words" */
+    key: string;
+    /** 模块显示名称，如 "单词" */
+    name: string;
+    /** 从属版块名称，如 "英语学习" */
+    section: string;
+    /** 从属版块图标，如 "📚" */
+    sectionIcon: string;
+    /** URL 前缀，如 "/words/" */
+    pathPrefix: string;
+}
 export interface AuthCoreConfig {
     /** Session cookie 名称（默认 "session"） */
     sessionCookieName: string;
@@ -23,5 +35,13 @@ export interface AuthCoreConfig {
     authPrefix?: string;
     /** 应用名称（日志用，默认 "App"） */
     appName?: string;
+    /** 主题色（十六进制，默认 "#3b82f6" 蓝色） */
+    primaryColor?: string;
+    /** 模块定义列表（可选。传入后开启权限管理系统） */
+    modules?: ModuleDef[];
+    /** 是否使用内置的完整管理页面（默认 true） */
+    enableBuiltinAdmin?: boolean;
+    /** 是否启用权限检查中间件（默认 false） */
+    enablePermission?: boolean;
 }
 //# sourceMappingURL=config.d.ts.map

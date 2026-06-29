@@ -1,17 +1,16 @@
 /**
  * @mycoin110/auth-core - 通用认证模块
  *
- * 包含：认证 API、登录/注册页面、管理页面、中间件
+ * 包含：认证 API、登录/注册页面、管理页面、中间件、模块权限管理
  * 每个项目一行代码即可接入完整认证系统。
  */
 export { createAuthCore } from "./factory.js";
-// 独立函数
 export { hashPassword, verifyPassword, createSession, findSession, slideSession, revokeSession, revokeAllSessionsForUser, isLockedOut, recordFailure, resetFailures, isValidEmail, normalizeEmail, } from "./auth.js";
-// 中间件
 export { createGate } from "./gate.js";
 export { requireAdmin } from "./require-admin.js";
-// 路由工厂
+export { createPermissionGate } from "./require-permission.js";
 export { createAuthRoutes } from "./routes/auth.js";
 export { createAdminUserRoutes } from "./routes/admin.js";
-export { createPageRoutes } from "./routes/pages.js";
+export { createPermissionRoutes } from "./routes/permission.js";
+export { createPageRoutes, userWidgetHtml, userWidgetScript } from "./routes/pages.js";
 //# sourceMappingURL=index.js.map

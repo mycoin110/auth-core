@@ -1,15 +1,17 @@
-import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type BetterSqlite3 from "better-sqlite3";
 import type { AuthCoreConfig } from "./config.js";
 import { createDb } from "./db.js";
 import { createGate } from "./gate.js";
+import { createPermissionGate } from "./require-permission.js";
 import { requireAdmin } from "./require-admin.js";
 import { createAuthRoutes } from "./routes/auth.js";
 import { createAdminUserRoutes } from "./routes/admin.js";
-import { createPageRoutes } from "./routes/pages.js";
+import { createPermissionRoutes } from "./routes/permission.js";
+import { createPageRoutes, userWidgetHtml, userWidgetScript } from "./routes/pages.js";
 
 const DEFAULT_CONFIG: Partial<AuthCoreConfig> = {
   sessionCookieName: "session",
@@ -20,6 +22,9 @@ const DEFAULT_CONFIG: Partial<AuthCoreConfig> = {
   authPrefix: "/api/auth",
   dbFileName: "app.sqlite",
   appName: "App",
+  primaryColor: "#3b82f6",
+  enableBuiltinAdmin: true,
+  enablePermission: false,
 };
 
 function resolveConfig(userConfig: AuthCoreConfig): Required<AuthCoreConfig> {
@@ -28,31 +33,34 @@ function resolveConfig(userConfig: AuthCoreConfig): Required<AuthCoreConfig> {
 
 export interface AuthCore {
   config: Required<AuthCoreConfig>;
-  db: Database.Database;
+  db: BetterSqlite3.Database;
   gate: ReturnType<typeof createGate>;
   requireAdmin: typeof requireAdmin;
+  requirePermission: ReturnType<typeof createPermissionGate>;
   authRoutes: ReturnType<typeof createAuthRoutes>;
   adminUserRoutes: ReturnType<typeof createAdminUserRoutes>;
+  adminPermissionRoutes: ReturnType<typeof createPermissionRoutes>;
   pageRoutes: ReturnType<typeof createPageRoutes>;
+  userWidgetHtml: string;
+  userWidgetScript: string;
 }
 
 /**
  * 创建认证核心实例。
- * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件，
- * 直接挂载到自己的 Hono 应用上即可。
- * @param userConfig 配置
- * @param existingDb 外部数据库实例（若不传则自动创建）
+ * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件。
  */
-export function createAuthCore(userConfig: AuthCoreConfig, existingDb?: Database.Database): AuthCore {
+export function createAuthCore(
+  userConfig: AuthCoreConfig,
+  existingDb?: BetterSqlite3.Database,
+): AuthCore {
   const config = resolveConfig(userConfig);
-  const db = existingDb ?? createDb(config);
+  const db = createDb(config, existingDb);
 
-  // 创建 gate 中间件
   const gate = createGate(config, db);
-
-  // 创建路由
+  const requirePermission = createPermissionGate(config, db);
   const authRoutes = createAuthRoutes(config, db);
   const adminUserRoutes = createAdminUserRoutes(config, db);
+  const adminPermissionRoutes = createPermissionRoutes(config, db);
   const pageRoutes = createPageRoutes(config);
 
   // 创建 admin 初始账号
@@ -60,23 +68,27 @@ export function createAuthCore(userConfig: AuthCoreConfig, existingDb?: Database
 
   console.log(`▶ ${config.appName} auth-core initialized`);
   console.log(`   cookie  : ${config.sessionCookieName}`);
-  console.log(`   db      : ${resolve(config.dataDir, config.dbFileName!)}`);
+  console.log(`   db      : ${resolve(config.dataDir, config.dbFileName as string)}`);
 
   return {
     config,
     db,
     gate,
     requireAdmin,
+    requirePermission,
     authRoutes,
     adminUserRoutes,
+    adminPermissionRoutes,
     pageRoutes,
+    userWidgetHtml: userWidgetHtml(config),
+    userWidgetScript: userWidgetScript(config),
   };
 }
 
-function seedAdminIfNeeded(config: Required<AuthCoreConfig>, db: Database.Database): void {
+function seedAdminIfNeeded(config: AuthCoreConfig, db: BetterSqlite3.Database): void {
   const existing = db
-    .prepare<[], { id: number }>("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
-    .get();
+    .prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
+    .get() as { id: number } | undefined;
   if (existing) return;
 
   const password = config.adminPassword ?? randomBytes(8).toString("hex");
@@ -104,4 +116,3 @@ function seedAdminIfNeeded(config: Required<AuthCoreConfig>, db: Database.Databa
   console.log("   ⚠ 首次登录后请立即重置密码！");
   console.log(banner);
 }
-

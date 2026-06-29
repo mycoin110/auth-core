@@ -16,4 +16,9 @@ export interface SessionRow {
     created_at: number;
     expires_at: number;
 }
+export interface UserModuleRow {
+    user_id: number;
+    module_key: string;
+    created_at: number;
+}
 //# sourceMappingURL=types.d.ts.map

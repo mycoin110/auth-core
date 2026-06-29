@@ -1,6 +1,8 @@
 {
   "name": "@mycoin110/auth-core",
-  "version": "1.0.0",
+  "version": "1.2.0",
+  "description": "通用认证模块 + 模块权限管理 + 管理界面"
+  ,
   "private": false,
   "type": "module",
   "main": "dist/index.js",

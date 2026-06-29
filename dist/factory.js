@@ -4,10 +4,12 @@ import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createDb } from "./db.js";
 import { createGate } from "./gate.js";
+import { createPermissionGate } from "./require-permission.js";
 import { requireAdmin } from "./require-admin.js";
 import { createAuthRoutes } from "./routes/auth.js";
 import { createAdminUserRoutes } from "./routes/admin.js";
-import { createPageRoutes } from "./routes/pages.js";
+import { createPermissionRoutes } from "./routes/permission.js";
+import { createPageRoutes, userWidgetHtml, userWidgetScript } from "./routes/pages.js";
 const DEFAULT_CONFIG = {
     sessionCookieName: "session",
     sessionTtlMs: 30 * 24 * 60 * 60 * 1000,
@@ -17,25 +19,25 @@ const DEFAULT_CONFIG = {
     authPrefix: "/api/auth",
     dbFileName: "app.sqlite",
     appName: "App",
+    primaryColor: "#3b82f6",
+    enableBuiltinAdmin: true,
+    enablePermission: false,
 };
 function resolveConfig(userConfig) {
     return { ...DEFAULT_CONFIG, ...userConfig };
 }
 /**
  * 创建认证核心实例。
- * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件，
- * 直接挂载到自己的 Hono 应用上即可。
- * @param userConfig 配置
- * @param existingDb 外部数据库实例（若不传则自动创建）
+ * 调用方得到 gate 中间件、auth 路由、admin 路由等全部组件。
  */
 export function createAuthCore(userConfig, existingDb) {
     const config = resolveConfig(userConfig);
-    const db = existingDb ?? createDb(config);
-    // 创建 gate 中间件
+    const db = createDb(config, existingDb);
     const gate = createGate(config, db);
-    // 创建路由
+    const requirePermission = createPermissionGate(config, db);
     const authRoutes = createAuthRoutes(config, db);
     const adminUserRoutes = createAdminUserRoutes(config, db);
+    const adminPermissionRoutes = createPermissionRoutes(config, db);
     const pageRoutes = createPageRoutes(config);
     // 创建 admin 初始账号
     seedAdminIfNeeded(config, db);
@@ -47,9 +49,13 @@ export function createAuthCore(userConfig, existingDb) {
         db,
         gate,
         requireAdmin,
+        requirePermission,
         authRoutes,
         adminUserRoutes,
+        adminPermissionRoutes,
         pageRoutes,
+        userWidgetHtml: userWidgetHtml(config),
+        userWidgetScript: userWidgetScript(config),
     };
 }
 function seedAdminIfNeeded(config, db) {

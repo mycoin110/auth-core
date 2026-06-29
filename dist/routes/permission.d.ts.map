@@ -1,0 +1,1 @@
+{"version":3,"file":"permission.d.ts","sourceRoot":"","sources":["../../src/routes/permission.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,MAAM,CAAC;AAC5B,OAAO,KAAK,EAAE,cAAc,EAAa,MAAM,cAAc,CAAC;AAC9D,OAAO,KAAK,aAAa,MAAM,gBAAgB,CAAC;AAEhD;;;GAGG;AACH,wBAAgB,sBAAsB,CAAC,MAAM,EAAE,cAAc,EAAE,EAAE,EAAE,aAAa,CAAC,QAAQ,8EAkFxF"}
